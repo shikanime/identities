@@ -57,19 +57,6 @@ Inspired by Catppuccin/nix:
 - `identities.enable` — global toggle for all identity modules
 - `identities.<name>.enable` — per-identity toggle
 - `identities.<name>.git.enable` / `.jj.enable` — per-tool output control
-- `identities.ghstack.enable` / `identities.glab.enable` — global toggles for
-  `shikanime` ghstack and glab config
-- `identities.shikanime.ghstack.enable` / `.glab.enable` — per-tool output
-  control for the `shikanime` ghstack and glab fragments
-- `identities.<name>.git.extraConfig` — forwarded git config merged into the
-  generated include; SSH signing fields are fixed by the module
-- `identities.<name>.git.condition` — optional include condition, such as
-  `gitpath:<path>`
-- `identities.<name>.jj.extraConfig` — forwarded Jujutsu config merged into the
-  generated include; signing fields are fixed by the module. Use
-  `--when.repositories` there to scope it to repositories
-- `identities.shikanime.ghstack.extraConfig` — forwarded ghstack config merged
-  into the generated config; GitHub identity fields are fixed by the module
 - `identities.shikanime.glab.extraConfig` — forwarded glab config merged into
   the generated config; GitLab host and token fields are fixed by the module
 - `identities.homeModules.default` — option-driven home-manager module that
@@ -81,10 +68,10 @@ Inspired by Catppuccin/nix:
 ```text
 modules/home/
 ├── default.nix        # Aggregator — imports all identities
-├── identities.nix     # Top-level options (global toggle, git/jj/ghstack/glab)
-├── shikanime.nix      # Primary identity (sops + git + jj + ghstack + glab)
+├── identities.nix     # Top-level options (global toggle, git/jj/glab)
+├── shikanime.nix      # Primary identity (sops + git + jj + glab)
 ├── gouv.nix           # Government identity (sops + git + jj)
-├── automata.nix       # YoRHa operator identity (sops + git + jj + ghstack)
+├── automata.nix       # YoRHa operator identity (sops + git + jj)
 └── lib.nix            # sops template helpers (mkGitConfigTemplate, etc.)
 
 secrets/
@@ -105,12 +92,3 @@ Secrets are encrypted with age key
 - Commit messages: plain-text capitalized title, no conventional-commit prefix.
 - Run `nix fmt` before shipping.
 
-## Stack
-
-- 1 commit == 1 PR via ghstack.
-- Amend + `ghstack` to resubmit.
-- `ghstack land` on head PR to land the entire stack.
-- Never `gh pr merge` (creates poisoned commits).
-- Never force-push ghstack branches.
-
-_Licensed under Apache-2.0._
