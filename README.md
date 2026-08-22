@@ -48,9 +48,9 @@ Import the shared module once, then enable the identities you want:
 
             automata = {
               enable = true;
-              git.condition = "gitpath:/home/shika/Source/Repos/github.com/yorha-automata";
+              git.condition = "gitpath:/home/shika/Source/Repos/github.com/yohra-operator";
               jj.extraConfig."--when".repositories = [
-                "/home/shika/Source/Repos/github.com/yorha-automata"
+                "/home/shika/Source/Repos/github.com/yohra-operator"
               ];
             };
           };

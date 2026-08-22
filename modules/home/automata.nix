@@ -65,8 +65,8 @@ in
     };
   };
 
-  # yorha-automata is the GitHub login (automata was taken); the option and
-  # docs stay on the public name automata.
+  # yohra-operator is the GitHub login (automata taken, formerly yorha-automata);
+  # the option and docs stay on the public name automata.
   config = mkIf (cfg.enable && cfg.automata.enable) {
     sops = {
       secrets = {
