@@ -78,19 +78,18 @@ in
   mkGlabConfigTemplate =
     {
       username,
-      token,
+      hosts,
       extraConfig,
-      host ? "gitlab.com",
     }:
     {
       file = yaml.generate "${username}-glabrc" (
         recursiveUpdate {
           git_protocol = "https";
-          hosts.${host} = {
+          hosts = mapAttrs (host: token: {
             api_host = host;
             api_protocol = "https";
             inherit token;
-          };
+          }) hosts;
         } extraConfig
       );
     };

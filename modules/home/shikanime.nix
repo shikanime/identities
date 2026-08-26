@@ -141,7 +141,7 @@ in
         glab-cli-config = mkIf cfg.shikanime.glab.enable (
           identities-lib.mkGlabConfigTemplate {
             username = config.sops.placeholder.shikanime-username;
-            token = config.sops.placeholder.shikanime-gitlab-token;
+            hosts.gitlab.com = config.sops.placeholder.shikanime-gitlab-token;
             extraConfig = cfg.shikanime.glab.extraConfig;
           }
         );
