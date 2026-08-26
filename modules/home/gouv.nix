@@ -63,6 +63,22 @@ in
         type = types.attrs;
       };
     };
+
+    glab = {
+      enable = mkEnableOption "glab config for gouv" // {
+        default = config.identities.glab.enable;
+      };
+
+      extraConfig = mkOption {
+        default = config.identities.glab.extraConfig;
+        description = ''
+          Extra glab config merged into the generated config.
+          The GitLab host and token fields are fixed by the module and cannot be
+          overridden.
+        '';
+        type = types.attrs;
+      };
+    };
   };
 
   config = mkIf (cfg.enable && cfg.gouv.enable) {
@@ -73,6 +89,7 @@ in
         gouv-name.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-gpg-key.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-ssh-signing-key.sopsFile = ../../secrets/gouv.enc.yaml;
+        gouv-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
       };
 
       templates = {
@@ -95,6 +112,15 @@ in
             extraConfig = cfg.gouv.jj.extraConfig;
           }
         );
+
+        gouv-glab-config = mkIf cfg.gouv.glab.enable (
+          identities-lib.mkGlabConfigTemplate {
+            username = config.sops.placeholder.gouv-username;
+            token = config.sops.placeholder.gouv-gitlab-token;
+            host = "gitlab.dso.cpin-hp.numerique-interieur.fr";
+            extraConfig = cfg.gouv.glab.extraConfig;
+          }
+        );
       };
     };
 
@@ -109,6 +135,11 @@ in
 
     xdg.configFile."jj/conf.d/${toString cfg.gouv.jj.priority}-gouv.toml" = mkIf cfg.gouv.jj.enable {
       source = config.lib.file.mkOutOfStoreSymlink config.sops.templates.gouv-jj-config.path;
+    };
+
+    xdg.configFile."glab-cli/gouv/config.yml" = mkIf cfg.gouv.glab.enable {
+      force = true;
+      source = config.lib.file.mkOutOfStoreSymlink config.sops.templates.gouv-glab-config.path;
     };
   };
 }
