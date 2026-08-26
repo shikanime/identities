@@ -70,7 +70,7 @@ in
       };
 
       extraConfig = mkOption {
-        default = config.identities.glab.extraConfig;
+        default = { };
         description = ''
           Extra glab config merged into the generated config.
           The GitLab host and token fields are fixed by the module and cannot be
@@ -89,7 +89,8 @@ in
         gouv-name.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-gpg-key.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-ssh-signing-key.sopsFile = ../../secrets/gouv.enc.yaml;
-        gouv-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
+        gouv-cpin-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
+        gouv-cpin-hp-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
       };
 
       templates = {
@@ -116,8 +117,10 @@ in
         gouv-glab-config = mkIf cfg.gouv.glab.enable (
           identities-lib.mkGlabConfigTemplate {
             username = config.sops.placeholder.gouv-username;
-            token = config.sops.placeholder.gouv-gitlab-token;
-            host = "gitlab.dso.cpin-hp.numerique-interieur.fr";
+            hosts = {
+              "gitlab.dso.cpin-hp.numerique-interieur.fr" = config.sops.placeholder.gouv-cpin-hp-gitlab-token;
+              "gitlab.dso.cpin.numerique-interieur.fr" = config.sops.placeholder.gouv-cpin-gitlab-token;
+            };
             extraConfig = cfg.gouv.glab.extraConfig;
           }
         );
