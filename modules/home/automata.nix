@@ -63,6 +63,22 @@ in
         type = types.attrs;
       };
     };
+
+    glab = {
+      enable = mkEnableOption "glab config for automata" // {
+        default = config.identities.glab.enable;
+      };
+
+      extraConfig = mkOption {
+        default = config.identities.glab.extraConfig;
+        description = ''
+          Extra glab config merged into the generated config.
+          The GitLab host and token fields are fixed by the module and cannot be
+          overridden.
+        '';
+        type = types.attrs;
+      };
+    };
   };
 
   # yohra-operator is the GitHub login (automata taken, formerly yorha-automata);
@@ -75,6 +91,7 @@ in
         automata-name.sopsFile = ../../secrets/automata.enc.yaml;
         automata-gpg-key.sopsFile = ../../secrets/automata.enc.yaml;
         automata-ssh-signing-key.sopsFile = ../../secrets/automata.enc.yaml;
+        automata-gitlab-token.sopsFile = ../../secrets/automata.enc.yaml;
       };
 
       templates = {
@@ -97,6 +114,14 @@ in
             extraConfig = cfg.automata.jj.extraConfig;
           }
         );
+
+        "automata-glab-config" = mkIf cfg.automata.glab.enable (
+          identities-lib.mkGlabConfigTemplate {
+            username = config.sops.placeholder."automata-username";
+            token = config.sops.placeholder."automata-gitlab-token";
+            extraConfig = cfg.automata.glab.extraConfig;
+          }
+        );
       };
     };
 
@@ -116,5 +141,10 @@ in
         {
           source = config.lib.file.mkOutOfStoreSymlink config.sops.templates."automata-jj-config".path;
         };
+
+    xdg.configFile."glab-cli/automata/config.yml" = mkIf cfg.automata.glab.enable {
+      force = true;
+      source = config.lib.file.mkOutOfStoreSymlink config.sops.templates."automata-glab-config".path;
+    };
   };
 }
