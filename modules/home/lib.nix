@@ -80,13 +80,14 @@ in
       username,
       token,
       extraConfig,
+      host ? "gitlab.com",
     }:
     {
       file = yaml.generate "${username}-glabrc" (
         recursiveUpdate {
           git_protocol = "https";
-          hosts.gitlab.com = {
-            api_host = "gitlab.com";
+          hosts.${host} = {
+            api_host = host;
             api_protocol = "https";
             inherit token;
           };
