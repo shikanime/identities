@@ -91,6 +91,8 @@ in
         gouv-ssh-signing-key.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-cpin-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
         gouv-cpin-hp-gitlab-token.sopsFile = ../../secrets/gouv.enc.yaml;
+        gouv-cpin-gitlab-host.sopsFile = ../../secrets/gouv.enc.yaml;
+        gouv-cpin-hp-gitlab-host.sopsFile = ../../secrets/gouv.enc.yaml;
       };
 
       templates = {
@@ -118,8 +120,9 @@ in
           identities-lib.mkGlabConfigTemplate {
             username = config.sops.placeholder.gouv-username;
             hosts = {
-              "gitlab.dso.cpin-hp.numerique-interieur.fr" = config.sops.placeholder.gouv-cpin-hp-gitlab-token;
-              "gitlab.dso.cpin.numerique-interieur.fr" = config.sops.placeholder.gouv-cpin-gitlab-token;
+              ${config.sops.placeholder.gouv-cpin-hp-gitlab-host} =
+                config.sops.placeholder.gouv-cpin-hp-gitlab-token;
+              ${config.sops.placeholder.gouv-cpin-gitlab-host} = config.sops.placeholder.gouv-cpin-gitlab-token;
             };
             extraConfig = cfg.gouv.glab.extraConfig;
           }
